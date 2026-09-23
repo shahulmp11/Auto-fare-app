@@ -3,17 +3,31 @@ const minimumFareInput = document.getElementById("minimumFare");
 
 const distanceDisplay = document.getElementById("distance");
 const fareDisplay = document.getElementById("fare");
-
 function calculateFare(distance) {
 
     const pricePerKm = Number(pricePerKmInput.value);
     const minimumFare = Number(minimumFareInput.value);
 
-    const calculatedFare = distance * pricePerKm;
+    // First 1.5 km is covered by the minimum fare
+    if (distance <= 1.5) {
+        fareDisplay.textContent = "₹" + minimumFare.toFixed(2);
+        return;
+    }
 
-    const finalFare = Math.max(calculatedFare, minimumFare);
+    // Distance after the first 1.5 km
+    const extraDistance = distance - 1.5;
 
-    fareDisplay.textContent = "₹" + finalFare.toFixed(2);
+    // Round up to the next 0.5 km
+    const extraHalfKm = Math.ceil(extraDistance / 0.5);
+
+    // Convert price per km to price per 0.5 km
+    const halfKmRate = pricePerKm / 2;
+
+    const finalFare =
+        minimumFare + (extraHalfKm * halfKmRate);
+
+    fareDisplay.textContent =
+        "₹" + finalFare.toFixed(2);
 }
 let watchId = null;
 let lastPosition = null;
